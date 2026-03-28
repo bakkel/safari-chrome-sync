@@ -3,7 +3,7 @@
 A macOS menu bar app that automatically synchronizes bookmarks and browsing history between Safari and Google Chrome. Because Chrome uses Google Sync, your Safari bookmarks will also become available on Chrome on other devices — such as a Windows PC.
 
 > **About this project**
-> This tool was created by **Michel van Helden**, a non-developer, entirely with the help of [Claude](https://claude.ai) (Anthropic's AI assistant). No prior programming knowledge was required. If you find a bug or have a feature request, please open a [GitHub Issue](../../issues) — feedback is always welcome.
+> This tool was created by **Michel van Helden**, a non-developer, entirely with the help of [Claude](https://claude.ai) (Anthropic's AI assistant). No prior programming knowledge was required. If you find a bug or have a feature request, please open a [GitHub Issue](https://github.com/bakkel/safari-chrome-sync/issues) — feedback is always welcome.
 
 ---
 
@@ -166,7 +166,7 @@ tail -f ~/.safari_chrome_sync/sync.log
 
 ## Contributing
 
-Bug reports and feature requests are welcome via [GitHub Issues](../../issues).
+Bug reports and feature requests are welcome via [GitHub Issues](https://github.com/bakkel/safari-chrome-sync/issues).
 Pull requests are appreciated — please open an issue first to discuss larger changes.
 
 ---
