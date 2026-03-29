@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# macOS
+.DS_Store
+
+# Claude project files (local only)
+.claude/
+
+# Sync state & logs (user-specific, not part of the project)
+~/.safari_chrome_sync/
