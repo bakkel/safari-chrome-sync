@@ -211,20 +211,12 @@ class SyncApp(rumps.App):
                     state = self._state()
                     n_s = len(state.get("safari_bookmark_urls", []))
                     n_c = len(state.get("chrome_bookmark_urls", []))
-                    if state.get("post_first_run_cleanup"):
-                        rumps.notification(
-                            "Safari ↔ Chrome Sync",
-                            "Cleanup pending",
-                            "Close Chrome completely and sync again to remove Google Sync-restored bookmarks.",
-                            sound=True,
-                        )
-                    else:
-                        rumps.notification(
-                            "Safari ↔ Chrome Sync",
-                            "Sync complete",
-                            f"Bookmarks — Safari: {n_s}  Chrome: {n_c}",
-                            sound=False,
-                        )
+                    rumps.notification(
+                        "Safari ↔ Chrome Sync",
+                        "Sync complete",
+                        f"Bookmarks — Safari: {n_s}  Chrome: {n_c}",
+                        sound=False,
+                    )
             else:
                 err = (result.stderr or result.stdout or "Unknown error").strip()
                 self._last_error = err.splitlines()[0][:80] if err else "Error"

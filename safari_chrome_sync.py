@@ -620,8 +620,6 @@ def sync_bookmarks(state: dict) -> dict:
         log.info(f"  Bookmarks bar: {n_bar} items  |  Other: {n_other} items  |  Totaal: {len(chrome_flat)} bladwijzers")
         state["safari_bookmark_urls"] = list(safari_urls)
         state["chrome_bookmark_urls"] = [b["url"] for b in chrome_flat]
-        # Markeer dat de eerstvolgende incrementele sync Google Sync-herstel opruimt
-        state["post_first_run_cleanup"] = True
         return state
     else:
         # ── Volgende runs: tweezijdige incrementele sync ──────────────────
@@ -631,35 +629,6 @@ def sync_bookmarks(state: dict) -> dict:
         chrome_data = read_chrome_bookmarks()
         chrome_flat = flatten_chrome(chrome_data)
         chrome_urls = {b["url"] for b in chrome_flat}
-
-        # ── Post-eerste-run opschoning ────────────────────────────────────
-        # Na de eerste run kan Google Sync oude bladwijzers terugzetten.
-        # Verwijder alles uit Chrome dat niet bij de eerste-run-schrijfactie
-        # hoorde (= niet in safari_bookmark_urls staat).
-        # VEREISTE: Chrome moet gesloten zijn, anders overschrijft Chrome
-        # het bestand zodra het sluit of synchroniseert met Google.
-        if state.get("post_first_run_cleanup"):
-            if chrome_running:
-                log.warning(
-                    "Post-eerste-run opschoning uitgesteld: Chrome is open. "
-                    "Sluit Chrome volledig af en voer de sync opnieuw uit."
-                )
-                # Laat de vlag staan zodat volgende sync het opnieuw probeert
-                return state
-            first_run_urls = set(state.get("safari_bookmark_urls", []))
-            extra = chrome_urls - first_run_urls
-            if extra:
-                log.info(
-                    f"Post-eerste-run opschoning: {len(extra)} door Google Sync "
-                    f"herstelde bladwijzer(s) verwijderen uit Chrome"
-                )
-                chrome_data, _ = remove_from_chrome(chrome_data, extra)
-                chrome_urls = {b["url"] for b in flatten_chrome(chrome_data)}
-                write_chrome_bookmarks(chrome_data)
-            else:
-                log.info("Post-eerste-run opschoning: geen extra bladwijzers gevonden")
-            state["post_first_run_cleanup"] = False
-            state["chrome_bookmark_urls"] = list(chrome_urls)
 
         # Wijzigingen bepalen
         new_in_safari  = safari_urls - prev_safari - chrome_urls

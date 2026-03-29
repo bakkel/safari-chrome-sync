@@ -64,20 +64,36 @@ bash install_menubar.sh
 
 The `↔` icon will appear in your menu bar. The app starts automatically at login.
 
+> **Terminal does not need to stay open.** After installation, the app runs as a background process managed by macOS (LaunchAgent). It operates completely independently of Terminal or iTerm — closing them has no effect on the sync. The app also restarts automatically after a reboot or login.
+>
+> Only if you start the app manually with `python3 menubar_app.py` (without installing) will it stop when you close Terminal.
+
 ---
 
 ## First-time synchronization
 
-The first sync requires a few extra steps because of Google Sync in Chrome. Follow them carefully — otherwise Google Sync will restore your old Chrome bookmarks after the sync.
+The first sync replaces all Chrome bookmarks with your Safari data. To ensure Google Sync doesn't interfere, start with a clean slate in Chrome.
 
-### Step A — Temporarily disable Chrome bookmark sync
+### Step A — Remove all bookmarks and history from Chrome
+
+**Bookmarks:**
 
 1. Open Chrome on your Mac
-2. Go to `chrome://settings/syncSetup`
-3. Turn off **Bookmarks** (or turn off sync entirely)
-4. Fully close Chrome (`Cmd+Q`)
+2. Go to `chrome://bookmarks`
+3. Open the **Bookmarks Bar** folder → select all (`Cmd+A`) → right-click → **Delete**
+4. Repeat for **Other Bookmarks** and any other folders shown
+5. Wait a few seconds so Google Sync can upload the empty state to the cloud
 
-> This prevents Google Sync from restoring old bookmarks during the first sync.
+> This ensures the Google cloud is also empty, so it cannot restore old bookmarks after the sync.
+
+**Browsing history:**
+
+1. In Chrome, go to `chrome://settings/clearBrowserData`
+2. Click the **Advanced** tab
+3. Set **Time range** to **All time**
+4. Check **Browsing history** (uncheck everything else to avoid deleting passwords, etc.)
+5. Click **Delete data**
+6. Fully close Chrome (`Cmd+Q`)
 
 ### Step B — Reset the sync state
 
@@ -94,12 +110,11 @@ Make sure both **Safari and Chrome are completely closed**, then:
 
 Chrome's bookmarks are now fully replaced with your Safari folder structure.
 
-### Step D — Re-enable Chrome bookmark sync
+### Step D — Open Chrome
 
-1. Open Chrome
-2. Go to `chrome://settings/syncSetup`
-3. Turn **Bookmarks** back on
-4. Chrome will upload the Safari bookmarks to Google → they will automatically appear on your other devices (e.g. your Windows PC)
+1. Open Chrome — it will detect the new local bookmarks
+2. Google Sync will upload them to the cloud
+3. Your other devices (e.g. your Windows PC) will automatically receive the Safari bookmarks
 
 ---
 
@@ -134,6 +149,19 @@ After the first sync everything runs automatically in the background.
 - Close **Safari** before syncing if you want changes from Safari to reach Chrome.
 - For the most reliable sync: close **both** browsers before clicking **Sync now**.
 
+### Syncing Chrome (Windows) changes to Safari
+
+If you have added bookmarks or visited pages in Chrome on another device (e.g. a Windows PC), those changes arrive on your Mac via Google Sync — but only after Chrome on Mac has synced them to its local files.
+
+**Recommended workflow:**
+
+1. Make sure Chrome on your Mac has had a moment to sync with Google (open it briefly if needed, then close it — `Cmd+Q`)
+2. **Before opening Safari**, click `↔` → **Sync now**
+3. The script reads the updated Chrome files and writes the changes to Safari
+4. Now open Safari — it will have the latest bookmarks and history from your Windows PC
+
+> If you open Safari first, the sync in the Chrome→Safari direction will be skipped until you close Safari again.
+
 ---
 
 ## Troubleshooting
@@ -145,7 +173,7 @@ After the first sync everything runs automatically in the background.
 → Run a Reset and follow the first-time sync procedure again (Steps A–D).
 
 **Old Chrome bookmarks keep coming back**
-→ Google Sync is restoring them from the cloud. Make sure to temporarily disable bookmark sync in Chrome (Step A) before running the reset.
+→ Google Sync is restoring them from the cloud. Make sure to delete all Chrome bookmarks first (Step A) and wait a few seconds before running the reset, so Google Sync can upload the empty state.
 
 **Menu bar icon has disappeared**
 → Start the app manually:

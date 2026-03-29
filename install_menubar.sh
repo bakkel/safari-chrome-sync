@@ -53,7 +53,7 @@ fi
 # ── Verwijder bestaande menubalk-agent indien actief ────────────
 if launchctl list "$PLIST_LABEL" &>/dev/null 2>&1; then
     echo "Bestaande menubalk-agent uitladen..."
-    launchctl unload "$PLIST_PATH" 2>/dev/null || true
+    launchctl bootout "gui/$(id -u)/$PLIST_LABEL" 2>/dev/null || true
 fi
 
 # ── Maak mappen aan ──────────────────────────────────────────────
@@ -89,7 +89,7 @@ cat > "$PLIST_PATH" << EOF
 
     <!-- GUI-app: toegang tot Aqua-sessie vereist -->
     <key>ProcessType</key>
-    <string>Interactive</key>
+    <string>Interactive</string>
 
     <key>StandardOutPath</key>
     <string>${LOG_PATH}</string>
@@ -100,7 +100,7 @@ cat > "$PLIST_PATH" << EOF
 EOF
 
 # ── Laad de agent in ─────────────────────────────────────────────
-launchctl load "$PLIST_PATH"
+launchctl bootstrap "gui/$(id -u)" "$PLIST_PATH"
 
 echo ""
 echo "✓ Menubalk-app geïnstalleerd en gestart"
@@ -114,10 +114,10 @@ echo "  App nu starten (zonder herinstalleren):"
 echo "    python3 \"$APP_SCRIPT\" &"
 echo ""
 echo "  App stoppen:"
-echo "    launchctl unload \"$PLIST_PATH\""
+echo "    launchctl bootout \"gui/$(id -u)/com.safari-chrome-sync-menubar\""
 echo ""
 echo "  App opnieuw inschakelen bij inloggen:"
-echo "    launchctl load \"$PLIST_PATH\""
+echo "    launchctl bootstrap \"gui/$(id -u)\" \"$PLIST_PATH\""
 echo ""
 echo "  Logbestand bekijken:"
 echo "    tail -f \"$LOG_PATH\""
