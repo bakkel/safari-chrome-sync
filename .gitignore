@@ -11,3 +11,10 @@ __pycache__/
 
 # Sync state & logs (user-specific, not part of the project)
 ~/.safari_chrome_sync/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.egg-info/
+*.dmg
+*.spec.build/

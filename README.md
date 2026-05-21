@@ -1,40 +1,40 @@
 # safari-chrome-sync
 
-A macOS menu bar app that automatically synchronizes bookmarks and browsing history between Safari and Google Chrome. Because Chrome uses Google Sync, your Safari bookmarks will also become available on Chrome on other devices — such as a Windows PC.
+A native macOS desktop application that automatically synchronizes bookmarks and browsing history between Safari and Google Chrome. Because Chrome uses Google Sync, your Safari bookmarks will also become available on Chrome on other devices — such as a Windows PC.
 
 > **About this project**
 > This tool was created by **Michel van Helden**, a non-developer, entirely with the help of [Claude](https://claude.ai) (Anthropic's AI assistant). No prior programming knowledge was required. If you find a bug or have a feature request, please open a [GitHub Issue](https://github.com/bakkel/safari-chrome-sync/issues) — feedback is always welcome.
 
 ---
 
-## How it works
+## Features
 
-- **First sync**: all Chrome bookmarks and history are completely replaced by Safari data.
-- **Subsequent syncs**: bidirectional — additions and deletions are kept in sync in both browsers.
-- Safari's full folder structure is preserved 1-to-1 in Chrome.
-- A `↔` icon in the macOS menu bar shows the current status and lets you trigger a manual sync or adjust settings.
+- **Interactive window** with sync controls, status display, and live activity log
+- **First sync**: all Chrome bookmarks and history are completely replaced by Safari data
+- **Subsequent syncs**: bidirectional — additions and deletions are kept in sync in both browsers
+- **Safari's full folder structure** is preserved 1-to-1 in Chrome
+- **Auto-sync scheduling**: configurable interval (5 min – 2 hrs)
+- **Real-time log viewer** showing last 50 lines of sync activity — copy to clipboard for debugging
+- **Easy installation**: native `.dmg` installer, no Python setup required
+- **Auto-launch on login** via macOS LaunchAgent
 
 ---
 
 ## Requirements
 
 - macOS with Safari and Google Chrome installed
-- Python 3.9 or higher — check with `python3 --version`
 - Full Disk Access for Python (see Step 2 below)
 
 ---
 
 ## Installation
 
-### Step 1 — Place the files
+### Step 1 — Download and install the app
 
-Download or clone this repository and make sure the following files are in the same folder:
-
-```
-safari_chrome_sync.py
-menubar_app.py
-install_menubar.sh
-```
+1. Download `Safari Chrome Sync.dmg` from the [latest release](https://github.com/bakkel/safari-chrome-sync/releases)
+2. Double-click the `.dmg` file to open it
+3. Drag **Safari Chrome Sync.app** to your **Applications** folder
+4. Eject the DMG (drag it to Trash in Finder)
 
 ### Step 2 — Grant Full Disk Access to Python
 
@@ -44,29 +44,44 @@ Safari's files are protected by macOS. Python needs special permission to read t
 2. Click **+** and navigate to:
    `/Library/Frameworks/Python.framework/Versions/` → select your Python version → `Resources/Python.app`
 3. Also add **Terminal** if it is not listed yet
-4. Restart Terminal
+4. Restart Terminal (or log out and log back in)
 
 > ⚠️ Without this step the script cannot read Safari files and sync will not work.
 
-### Step 3 — Install the `rumps` library
+### Step 3 — Launch the app
+
+Open **Applications** folder and double-click **Safari Chrome Sync.app**.
+
+The app window will open. The app also installs a LaunchAgent that starts it automatically at login.
+
+---
+
+## Building from source (for developers)
+
+If you want to build the app yourself:
+
+### Prerequisites
+- Python 3.9 or higher
+- PyQt6 and PyInstaller installed
+
+### Build steps
 
 ```bash
-pip3 install rumps
+# Clone the repository
+git clone https://github.com/bakkel/safari-chrome-sync.git
+cd safari-chrome-sync
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Build the .app bundle with PyInstaller
+pyinstaller safari_chrome_sync.spec
+
+# Create the .dmg installer
+bash build_dmg.sh
+
+# Result: Safari Chrome Sync.dmg ready for distribution
 ```
-
-### Step 4 — Install the menu bar app
-
-Open Terminal, navigate to the folder containing the files, and run:
-
-```bash
-bash install_menubar.sh
-```
-
-The `↔` icon will appear in your menu bar. The app starts automatically at login.
-
-> **Terminal does not need to stay open.** After installation, the app runs as a background process managed by macOS (LaunchAgent). It operates completely independently of Terminal or iTerm — closing them has no effect on the sync. The app also restarts automatically after a reboot or login.
->
-> Only if you start the app manually with `python3 menubar_app.py` (without installing) will it stop when you close Terminal.
 
 ---
 
@@ -120,28 +135,34 @@ Chrome's bookmarks are now fully replaced with your Safari folder structure.
 
 ## Daily use
 
-After the first sync everything runs automatically in the background.
+After the first sync, everything runs automatically in the background.
 
 | Action | Result |
 |---|---|
-| Add a bookmark in Safari | Appears in Chrome at the next sync |
-| Delete a bookmark in Safari | Removed from Chrome at the next sync |
-| Add a bookmark in Chrome (Mac or Windows via Google Sync) | Appears in Safari at the next sync |
-| Delete a bookmark in Chrome | Removed from Safari at the next sync |
+| Add a bookmark in Safari | Appears in Chrome at the next auto-sync |
+| Delete a bookmark in Safari | Removed from Chrome at the next auto-sync |
+| Add a bookmark in Chrome (Mac or Windows via Google Sync) | Appears in Safari at the next auto-sync |
+| Delete a bookmark in Chrome | Removed from Safari at the next auto-sync |
 
-### Menu bar options
+### Application window controls
+
+| Control | Description |
+|---|---|
+| **Sync Now** button | Triggers an immediate sync |
+| **Auto-sync interval** | Dropdown to set automatic sync interval (5 min – 2 hrs) |
+| **Sync bookmarks** checkbox | Enable / disable bookmark sync |
+| **Sync history** checkbox | Enable / disable history sync |
+| **Copy Log** button | Copy the entire activity log to clipboard for sharing / debugging |
+| **Log viewer** | Live display of the last 50 lines of sync activity, auto-scrolling |
+
+### Tools menu
 
 | Option | Description |
 |---|---|
-| **Sync now** | Triggers an immediate sync |
-| **Interval** | Set the automatic sync interval (5 min – 2 hrs) |
-| **Sync bookmarks** | Enable / disable bookmark sync |
-| **Sync history** | Enable / disable history sync |
-| **Open log file** | View what was synced and when |
-| **Open backup folder** | Access automatic backups of bookmark files |
-| **Debug: dump Safari structure** | Export Safari bookmark structure for inspection |
-| **Reset (new first run)** | Clear the sync state — triggers a full first run on next sync |
-| **Quit** | Stop the menu bar app |
+| **Open Config** | View the configuration file with current sync settings |
+| **Open Backups** | Access automatic backups of bookmark files created before each sync |
+| **Debug: Dump Safari Structure** | Export Safari bookmark structure for inspection and troubleshooting |
+| **Reset Sync State** | Clear the sync state — the next sync will treat as a fresh first run |
 
 ### Tips for reliable syncing
 
@@ -167,7 +188,7 @@ If you have added bookmarks or visited pages in Chrome on another device (e.g. a
 ## Troubleshooting
 
 **Sync does nothing / permission error**
-→ Check that `Python.app` has Full Disk Access (see Step 2).
+→ Check that `Python.app` has Full Disk Access (see Step 2 under Installation).
 
 **Bookmarks are not in the correct folder**
 → Run a Reset and follow the first-time sync procedure again (Steps A–D).
@@ -175,15 +196,11 @@ If you have added bookmarks or visited pages in Chrome on another device (e.g. a
 **Old Chrome bookmarks keep coming back**
 → Google Sync is restoring them from the cloud. Make sure to delete all Chrome bookmarks first (Step A) and wait a few seconds before running the reset, so Google Sync can upload the empty state.
 
-**Menu bar icon has disappeared**
-→ Start the app manually:
-```bash
-python3 /path/to/menubar_app.py &
-```
-Or reinstall:
-```bash
-bash install_menubar.sh
-```
+**App does not appear in Applications after installation**
+→ Make sure you dragged `Safari Chrome Sync.app` from the DMG to your Applications folder and waited for the copy to complete.
+
+**App does not auto-launch at login**
+→ The app installs a LaunchAgent automatically. If you move the `.app` to a different location, the LaunchAgent path may become invalid. Reinstall by launching the app again from Applications.
 
 **View the log file directly**
 ```bash
