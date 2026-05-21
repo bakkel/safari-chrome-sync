@@ -37,29 +37,20 @@ SYNC_DIR = Path.home() / ".safari_chrome_sync"
 CONFIG_FILE = SYNC_DIR / "config.json"
 STATE_FILE = SYNC_DIR / "state.json"
 LOG_FILE = SYNC_DIR / "sync.log"
-SCRIPT = Path(__file__).parent / "safari_chrome_sync.py"
-
 INTERVALS = [5, 10, 15, 30, 60, 120]
 
 
 class SyncWorkerThread(QThread):
-    """Background thread to run sync subprocess without blocking UI."""
-    finished = pyqtSignal(int, str)  # returncode, stderr_text
-
-    def __init__(self, script_path):
-        super().__init__()
-        self.script_path = script_path
+    """Background thread to run sync without blocking UI."""
+    finished = pyqtSignal(int, str)  # returncode, error_text
 
     def run(self):
         try:
-            result = subprocess.run(
-                [sys.executable, str(self.script_path), "sync"],
-                capture_output=True, text=True, timeout=180
-            )
-            err = result.stderr or ""
-            self.finished.emit(result.returncode, err)
-        except subprocess.TimeoutExpired:
-            self.finished.emit(1, "Timeout: sync took longer than 3 minutes")
+            _sync.run_sync(verbose=False)
+            self.finished.emit(0, "")
+        except SystemExit as e:
+            code = int(e.code) if e.code else 1
+            self.finished.emit(code, "Sync failed — check log for details")
         except Exception as e:
             self.finished.emit(1, str(e))
 
@@ -301,7 +292,7 @@ class SyncApp(QMainWindow):
         self._last_error = None
         self._refresh_status()
 
-        self._sync_thread = SyncWorkerThread(SCRIPT)
+        self._sync_thread = SyncWorkerThread()
         self._sync_thread.finished.connect(self._on_sync_finished)
         self._sync_thread.start()
 
@@ -366,15 +357,13 @@ class SyncApp(QMainWindow):
         subprocess.run(["open", str(backup_dir)])
 
     def _on_debug(self):
-        result = subprocess.run(
-            [sys.executable, str(SCRIPT), "debug"],
-            capture_output=True, text=True, timeout=30
-        )
-        debug_file = SYNC_DIR / "debug_safari.txt"
-        if debug_file.exists():
-            subprocess.run(["open", "-t", str(debug_file)])
-        else:
-            QMessageBox.critical(self, "Debug Failed", result.stderr or result.stdout or "Unknown error")
+        try:
+            _sync.cmd_debug(None)
+            debug_file = SYNC_DIR / "debug_safari.txt"
+            if debug_file.exists():
+                subprocess.run(["open", "-t", str(debug_file)])
+        except Exception as e:
+            QMessageBox.critical(self, "Debug Failed", str(e))
 
     def _on_reset(self):
         # Check if browsers are open
