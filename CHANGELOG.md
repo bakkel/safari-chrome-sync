@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [0.3] - 2026-05-21
+## [1.0] - 2026-05-21
 
 ### Changed
 - **Complete UI redesign**: Converted from menu bar app (rumps) to native macOS window-based desktop application

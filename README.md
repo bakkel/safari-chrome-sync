@@ -120,7 +120,7 @@ The first sync replaces all Chrome bookmarks with your Safari data. To ensure Go
 Make sure both **Safari and Chrome are completely closed** (`Cmd+Q`), then:
 
 1. Click **Sync Now** in the app
-2. Wait until the log shows "Sync voltooid"
+2. Wait until the log shows "Sync voltooid" (sync complete)
 
 Chrome's bookmarks are now fully replaced with your Safari folder structure.
 
