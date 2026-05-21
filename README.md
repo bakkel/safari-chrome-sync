@@ -23,7 +23,7 @@ A native macOS desktop application that automatically synchronizes bookmarks and
 ## Requirements
 
 - macOS with Safari and Google Chrome installed
-- Full Disk Access for Python (see Step 2 below)
+- Full Disk Access for Safari Chrome Sync (see Step 2 below)
 
 ---
 
@@ -36,17 +36,16 @@ A native macOS desktop application that automatically synchronizes bookmarks and
 3. Drag **Safari Chrome Sync.app** to your **Applications** folder
 4. Eject the DMG (drag it to Trash in Finder)
 
-### Step 2 — Grant Full Disk Access to Python
+### Step 2 — Grant Full Disk Access to the app
 
-Safari's files are protected by macOS. Python needs special permission to read them:
+Safari's files are protected by macOS. The app needs special permission to read them:
 
 1. Open **System Settings** → **Privacy & Security** → **Full Disk Access**
-2. Click **+** and navigate to:
-   `/Library/Frameworks/Python.framework/Versions/` → select your Python version → `Resources/Python.app`
-3. Also add **Terminal** if it is not listed yet
-4. Restart Terminal (or log out and log back in)
+2. Click **+** and navigate to **Applications → Safari Chrome Sync.app**
+3. Confirm the toggle is enabled
+4. Restart **Safari Chrome Sync** if it was already open
 
-> ⚠️ Without this step the script cannot read Safari files and sync will not work.
+> ⚠️ Without this step the app cannot read Safari files and sync will not work.
 
 ### Step 3 — Launch the app
 
@@ -188,7 +187,7 @@ If you have added bookmarks or visited pages in Chrome on another device (e.g. a
 ## Troubleshooting
 
 **Sync does nothing / permission error**
-→ Check that `Python.app` has Full Disk Access (see Step 2 under Installation).
+→ Check that **Safari Chrome Sync.app** has Full Disk Access (see Step 2 under Installation).
 
 **Bookmarks are not in the correct folder**
 → Run a Reset and follow the first-time sync procedure again (Steps A–D).
