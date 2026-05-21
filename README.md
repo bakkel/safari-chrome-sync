@@ -11,7 +11,7 @@ A native macOS desktop application that automatically synchronizes bookmarks and
 
 - **Interactive window** with sync controls, status display, and live activity log
 - **First sync**: all Chrome bookmarks and history are completely replaced by Safari data
-- **Subsequent syncs**: bidirectional — additions and deletions are kept in sync in both browsers
+- **Subsequent syncs**: bidirectional additions; deletions have limitations with Google Sync (see below)
 - **Safari's full folder structure** is preserved 1-to-1 in Chrome
 - **Auto-sync scheduling**: configurable interval (5 min – 2 hrs)
 - **Real-time log viewer** showing last 50 lines of sync activity — copy to clipboard for debugging
@@ -111,16 +111,16 @@ The first sync replaces all Chrome bookmarks with your Safari data. To ensure Go
 
 ### Step B — Reset the sync state
 
-1. Click `↔` in the menu bar
-2. Choose **Reset (new first run)**
-3. Confirm with **Reset**
+1. Open **Safari Chrome Sync**
+2. Go to **Tools → Reset Sync State**
+3. Confirm with **OK**
 
 ### Step C — Run the first sync
 
-Make sure both **Safari and Chrome are completely closed**, then:
+Make sure both **Safari and Chrome are completely closed** (`Cmd+Q`), then:
 
-1. Click `↔` → **Sync now**
-2. Wait for the "Sync complete" notification
+1. Click **Sync Now** in the app
+2. Wait until the log shows "Sync voltooid"
 
 Chrome's bookmarks are now fully replaced with your Safari folder structure.
 
@@ -138,10 +138,30 @@ After the first sync, everything runs automatically in the background.
 
 | Action | Result |
 |---|---|
-| Add a bookmark in Safari | Appears in Chrome at the next auto-sync |
-| Delete a bookmark in Safari | Removed from Chrome at the next auto-sync |
-| Add a bookmark in Chrome (Mac or Windows via Google Sync) | Appears in Safari at the next auto-sync |
-| Delete a bookmark in Chrome | Removed from Safari at the next auto-sync |
+| Add a bookmark in Safari | Appears in Chrome after next sync (Chrome must be closed during sync) |
+| Add a bookmark in Chrome or Windows PC via Google Sync | Appears in Safari after next sync (Safari must be closed during sync) |
+| Delete a bookmark in Chrome or Windows PC via Google Sync | Removed from Safari after next sync (Safari must be closed during sync) |
+| Delete a bookmark in Safari | ⚠️ See Google Sync note below |
+
+### ⚠️ Google Sync and deletions from Safari
+
+Deleting a bookmark in Safari and syncing it to Chrome **will not work reliably** if Google Sync is active across multiple devices (e.g. a Windows PC).
+
+Here is why:
+
+1. You delete a bookmark in Safari
+2. The sync removes it from Chrome on your Mac
+3. Google Sync detects the deletion and checks its cloud — the bookmark still exists on your Windows PC
+4. Google Sync restores the bookmark to Chrome on your Mac
+5. The bookmark is back
+
+This is not a bug — it is how Google Sync works. **As long as a bookmark exists on any other Chrome device, Google Sync will keep restoring it.**
+
+**To permanently delete a bookmark across all devices:**
+1. Delete it in Safari
+2. Also delete it manually in Chrome on every other device (e.g. your Windows PC), or delete it via `chrome://bookmarks` on Mac before Google Sync restores it
+3. Wait for Google Sync to propagate the deletion across all devices
+4. Then sync Safari Chrome Sync — it will stay gone
 
 ### Application window controls
 
@@ -176,11 +196,11 @@ If you have added bookmarks or visited pages in Chrome on another device (e.g. a
 **Recommended workflow:**
 
 1. Make sure Chrome on your Mac has had a moment to sync with Google (open it briefly if needed, then close it — `Cmd+Q`)
-2. **Before opening Safari**, click `↔` → **Sync now**
-3. The script reads the updated Chrome files and writes the changes to Safari
+2. **Before opening Safari**, click **Sync Now** in the app
+3. The app reads the updated Chrome files and writes the changes to Safari
 4. Now open Safari — it will have the latest bookmarks and history from your Windows PC
 
-> If you open Safari first, the sync in the Chrome→Safari direction will be skipped until you close Safari again.
+> If Safari is open during sync, the Chrome→Safari direction will be skipped until you close Safari again.
 
 ---
 
